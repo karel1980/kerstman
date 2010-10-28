@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import sys
 import random
 import smtplib
@@ -32,7 +34,7 @@ def main():
       fr=names[i]
       to=names[(i+1)%len(names)]
       p2p[fr]=to
-      if partners[to]==fr:
+      if partners[to]==fr: # p2p should not be between partners
         ok = False
     
     c2c={}
@@ -45,20 +47,20 @@ def main():
         for y in [to[0],to[1]]:
           if x==y:
             ok=False
+          if p2p[x] == p2p[partners[y]]:
+            ok=False
+          if p2p[partners[x]] == p2p[y]:
+            ok=False
    
-  #we don't want to see this, but we might want to keep it in a file
-  #print p2p   
-  #print c2c
-
   server=smtplib.SMTP(sys.argv[2])
   for fr,to in p2p.iteritems():
-    msg="Subject: De kerstman\nFrom: \"Kerstman\" <karel.vervaeke@telenet.be>\n\nBeste %s.  Je mag dit jaar een cadeautje kopen voor %s.  Samen met %s mag je een cadeautje kopen voor %s en %s.  Veel plezier!"%(fr,to,partners[fr],c2c[fr][0],c2c[fr][1])
+    msg="Subject: De kerstman\nFrom: \"Kerstman\" <karel.vervaeke@telenet.be>\n\nBeste %s,\nJe mag dit jaar een cadeautje kopen voor %s.  Samen met %s mag je een cadeautje kopen voor %s en %s.  Gelieve nog even te bevestigen dat je deze mail gekregen hebt, dat spaart verwarring achteraf uit. Veel plezier!"%(fr,to,partners[fr],c2c[fr][0],c2c[fr][1])
     dbg="%s voor %s en voor %s"%(fr,to,c2c[fr])
     
     print(dbg)
     
     server.set_debuglevel(1)
-    server.sendmail('Kerstman <noreply@example.com>',people[fr], msg)
+    server.sendmail('Kerstman <karel.vervaeke@telenet.be>',people[fr], msg)
 
 if __name__=='__main__':
   main()
